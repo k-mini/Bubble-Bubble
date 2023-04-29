@@ -1,4 +1,4 @@
-package bubble.test.ex08;
+package bubble.test.ex10;
 
 import java.awt.Color;
 import java.awt.image.BufferedImage;
@@ -33,12 +33,20 @@ public class BackgroundPlayerService implements Runnable {
 			int bottomColor = image.getRGB(player.getX() + 10, player.getY() + 50 + 5 )
 					+ image.getRGB(player.getX() + 50 - 10, player.getY() + 50 + 5 );
 			
+			
 			// 바닥 충돌 확인
 			if (bottomColor != -2) {
-				System.out.println("바텀 컬러 : " + bottomColor);
-				System.out.println("바닥에 충돌함");
+				//System.out.println("바텀 컬러 : " + bottomColor);
+				//System.out.println("바닥에 충돌함");
 				player.setDown(false);
+			} else {
+				if (!player.isUp() && !player.isDown()) {
+					//System.out.println("다운 실행됨");
+					player.down();
+				}
 			}
+			
+			
 			//System.out.println(player.isDown());
 			// 외벽 충돌 확인
 			if(leftColor.getRed() == 255 && leftColor.getGreen() == 0 && leftColor.getBlue() == 0) {
@@ -54,11 +62,13 @@ public class BackgroundPlayerService implements Runnable {
 				player.setRightWallCrash(false);
 			}
 			
+			
 			try {
 				Thread.sleep(10);
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
+			
 		}
 	}
 }

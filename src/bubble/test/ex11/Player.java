@@ -1,4 +1,4 @@
-package bubble.test.ex08;
+package bubble.test.ex11;
 
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
@@ -16,6 +16,9 @@ public class Player extends JLabel implements Moveable {
 	// 위치 상태
 	private int x;
 	private int y;
+	
+	// 플레이어의 방향
+	private PlayerWay playerWay;
 
 	// 움직임 상태
 	private volatile boolean left;
@@ -56,6 +59,7 @@ public class Player extends JLabel implements Moveable {
 		leftWallCrash = false;
 		rightWallCrash = false;
 		
+		playerWay = PlayerWay.RIGHT;
 		setIcon(playerR);
 		setSize(50, 50);
 		setLocation(x, y);
@@ -69,6 +73,7 @@ public class Player extends JLabel implements Moveable {
 	@Override
 	public void left() {
 		//System.out.println("left 쓰레드 생성");
+		playerWay = PlayerWay.LEFT;
 		left = true;
 		//System.out.println(left);
 		new Thread( () -> { 
@@ -89,6 +94,7 @@ public class Player extends JLabel implements Moveable {
 	@Override
 	public void right() {
 		//System.out.println("right 쓰레드 생성");
+		playerWay = PlayerWay.RIGHT;
 		right = true;
 		//System.out.println("right : true");
 		new Thread( () -> {
@@ -122,7 +128,7 @@ public class Player extends JLabel implements Moveable {
 				}
 			}
 			
-			up = false;
+			//up = false;
 			down();
 			//System.out.println("up 종료");
 		}).start();
@@ -130,11 +136,11 @@ public class Player extends JLabel implements Moveable {
 
 	@Override
 	public void down() {
-		//System.out.println("down");
+		System.out.println("down");
 		down = true;
 		new Thread(() -> {
 			while (down) {
-				System.out.println(down);
+				//System.out.println(down);
 				y = y + JUMPSPEED;
 				setLocation(x,y);
 				try {
@@ -143,6 +149,7 @@ public class Player extends JLabel implements Moveable {
 					e.printStackTrace();
 				}
 			}
+			up = false;
 			down = false;
 			
 		}).start();

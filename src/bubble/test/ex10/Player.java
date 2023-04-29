@@ -1,4 +1,4 @@
-package bubble.test.ex08;
+package bubble.test.ex10;
 
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
@@ -122,7 +122,7 @@ public class Player extends JLabel implements Moveable {
 				}
 			}
 			
-			up = false;
+			//up = false;
 			down();
 			//System.out.println("up 종료");
 		}).start();
@@ -130,11 +130,11 @@ public class Player extends JLabel implements Moveable {
 
 	@Override
 	public void down() {
-		//System.out.println("down");
+		System.out.println("down");
 		down = true;
 		new Thread(() -> {
 			while (down) {
-				System.out.println(down);
+				//System.out.println(down);
 				y = y + JUMPSPEED;
 				setLocation(x,y);
 				try {
@@ -143,6 +143,7 @@ public class Player extends JLabel implements Moveable {
 					e.printStackTrace();
 				}
 			}
+			up = false;
 			down = false;
 			
 		}).start();
