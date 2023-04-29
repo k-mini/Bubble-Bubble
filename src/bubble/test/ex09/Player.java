@@ -1,4 +1,4 @@
-package bubble.test.ex05;
+package bubble.test.ex09;
 
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
@@ -18,11 +18,15 @@ public class Player extends JLabel implements Moveable {
 	private int y;
 
 	// 움직임 상태
-	private boolean left;
-	private boolean right;
-	private boolean up;
-	private boolean down;
-
+	private volatile boolean left;
+	private volatile boolean right;
+	private volatile boolean up;
+	private volatile boolean down;
+	
+	// 벽에 충돌한 상태
+	private boolean leftWallCrash;
+	private boolean rightWallCrash;
+	
 	// 플레이어 속도 상태
 	private final int SPEED = 4;
 	private final int JUMPSPEED = 2; // up, down
@@ -32,6 +36,7 @@ public class Player extends JLabel implements Moveable {
 	public Player() {
 		initObject();
 		initSetting();
+		initBackgroundPlayerService();
 	}
 
 	private void initObject() {
@@ -40,7 +45,7 @@ public class Player extends JLabel implements Moveable {
 	}
 
 	private void initSetting() {
-		x = 55;
+		x = 80;
 		y = 535;
 		
 		left = false;
@@ -48,16 +53,24 @@ public class Player extends JLabel implements Moveable {
 		up = false;
 		down = false;
 		
+		leftWallCrash = false;
+		rightWallCrash = false;
+		
 		setIcon(playerR);
 		setSize(50, 50);
 		setLocation(x, y);
 	}
-
+	
+	public void initBackgroundPlayerService() {
+		new Thread(new BackgroundPlayerService(this) ).start();
+	}
+	
 	// 이벤트 핸들러
 	@Override
 	public void left() {
-		System.out.println("left 쓰레드 생성");
+		//System.out.println("left 쓰레드 생성");
 		left = true;
+		//System.out.println(left);
 		new Thread( () -> { 
 			while(left) {
 				setIcon(playerL);
@@ -70,12 +83,14 @@ public class Player extends JLabel implements Moveable {
 				} 
 			}
 		}).start();
+		System.out.println(left);
 	}
 
 	@Override
 	public void right() {
-		System.out.println("right 쓰레드 생성");
+		//System.out.println("right 쓰레드 생성");
 		right = true;
+		//System.out.println("right : true");
 		new Thread( () -> {
 			while(right) {
 				setIcon(playerR);
@@ -88,12 +103,13 @@ public class Player extends JLabel implements Moveable {
 				} 
 			}
 		}).start();
+		//System.out.println("right : true");
 	}
 	
 	// left + up , right + up
 	@Override
-	public void up() {
-		System.out.println("up");
+	public synchronized void up() {
+		//System.out.println("up");
 		up = true;
 		new Thread(()->{
 			for(int i=0;i< 130/JUMPSPEED ;i++) {
@@ -108,7 +124,7 @@ public class Player extends JLabel implements Moveable {
 			
 			up = false;
 			down();
-			System.out.println("up 종료");
+			//System.out.println("up 종료");
 		}).start();
 	}
 
@@ -117,7 +133,8 @@ public class Player extends JLabel implements Moveable {
 		System.out.println("down");
 		down = true;
 		new Thread(() -> {
-			for(int i=0;i< 130/JUMPSPEED ;i++) {
+			while (down) {
+				//System.out.println(down);
 				y = y + JUMPSPEED;
 				setLocation(x,y);
 				try {
