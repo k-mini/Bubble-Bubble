@@ -26,7 +26,6 @@ public class BubbleFrame extends JFrame {
 		initListener();
 		setVisible(true);
 		setTitle("Bubble Bubble");
-		
 	}
 
 	private void initObject() {
@@ -36,6 +35,7 @@ public class BubbleFrame extends JFrame {
 		add(player);
 		enemy = new Enemy(this);
 		add(enemy);
+		new BGM();
 	}
 
 	private void initSetting() {
@@ -91,7 +91,5 @@ public class BubbleFrame extends JFrame {
 
 	public static void main(String[] args) {
 		new BubbleFrame();
-		//System.out.println(System.identityHashCode(mContext2));
-		
 	}
 }
